@@ -8,7 +8,7 @@ The application will provide functionality to support create, read, update and d
 
 Workplan:
 
-- A Workplan has a `name`, `status`, `category` and one or more `tasks`.
+- A Workplan has a `name`, `status`, `category` and zero or more `tasks`.
 - Valid statuses are "Not Started", "In Progress", and "Complete".
 - Valid categories are "Engineering", "Sales", and "Product".
 - In addition to listing it's other attributes, the workplan view should list the number of tasks per workplan and be able to navigate to it's task list via a link (see design), as well as be able to create a task when none exist.
@@ -17,7 +17,7 @@ Task:
 
 - belongs to one `workplan`
 - has a `name`, `status` (same values as above) and `due date`
-- has one or more `comments` (optional)
+- has zero or more `comments` (optional)
 - support crud operations
 - support navigation back to Workplans
 
