@@ -6,17 +6,18 @@ Your assignment is to build a Workplan/Task list web application that follows th
 
 The application will provide functionality to support create, read, update and delete (CRUD) operations on workplans and tasks, and support navigation between them.
 
-Workplans:
+Workplan:
 
-- A Workplan has a name, status, category and one or more tasks.
+- A Workplan has a `name`, `status`, `category` and one or more `tasks`.
 - Valid statuses are "Not Started", "In Progress", and "Complete".
 - Valid categories are "Engineering", "Sales", and "Product".
 - In addition to listing it's other attributes, the workplan view should list the number of tasks per workplan and be able to navigate to it's task list via a link (see design), as well as be able to create a task when none exist.
 
-Tasks:
+Task:
 
-- belong to one Workplan
-- have a name, status (same values as above) and due date.
+- belongs to one `workplan`
+- has a `name`, `status` (same values as above) and `due date`
+- has one or more `comments` (optional)
 - support crud operations
 - support navigation back to Workplans
 
