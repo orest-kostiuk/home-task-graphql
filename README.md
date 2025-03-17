@@ -43,8 +43,34 @@ Backend/Database:
 
 ### Getting started
 
-- To create your initial front-end app, use `create-react-app` (https://reactjs.org/docs/create-a-new-react-app.html#create-react-app)
-- Follow documentation/tutorials from your web framework of choice to setup initial server and database
+There are simple frontend and backend servers for your convience.
+
+Backend: A rails application you can use if you wish. In order to setup do the following:
+
+- Install dependencies
+
+  - `bundle install`
+
+- Database creation
+
+  - `rails db:create`
+
+- Database initialization
+
+  - `rails db:migrate`
+
+- Run rails server
+
+  - `rails server`
+
+Frontend: There is a simple react application you can use as well:
+To run:
+
+- `npm install`
+- `npm run start`
+
+- If you do not wish to use these sample apps please feel free to use whatever you wish.
+  - Follow documentation/tutorials from your web framework of choice to setup initial server and database
 
 ### What we're looking for
 
