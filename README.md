@@ -45,6 +45,9 @@ Backend/Database:
 
 There are simple frontend and backend servers for your convience.
 
+Install ruby / rails first. I suggest using rbenv: https://github.com/rbenv/rbenv
+This will tell you how to install both ruby and bundle.
+
 Backend: A rails application you can use if you wish. In order to setup do the following:
 
 - Install dependencies
@@ -64,6 +67,9 @@ Backend: A rails application you can use if you wish. In order to setup do the f
   - `rails server`
 
 Frontend: There is a simple react application you can use as well:
+
+First install node / npm: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+
 To run:
 
 - `npm install`
