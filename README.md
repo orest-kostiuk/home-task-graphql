@@ -43,13 +43,11 @@ Backend/Database:
 
 ### Getting started
 
-There are simple frontend and backend servers for your convience.
-
-Install ruby / rails first. I suggest using rbenv: https://github.com/rbenv/rbenv
-Ruby version to install is `ruby-3.3.4`
-This will tell you how to install both ruby and bundle.
+For convenience, we've included a sample backend Rails server with MySql database and Node server/React app for frontend if you'd like to use them. The prerequisites for installation are listed below.
 
 Backend: A rails application you can use if you wish. In order to setup do the following:
+
+- Install ruby: We suggest using rbenv: https://github.com/rbenv/rbenv and install Ruby version `ruby-3.3.4`
 
 - Install dependencies
 
