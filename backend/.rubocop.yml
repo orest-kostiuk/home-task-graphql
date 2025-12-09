@@ -1,8 +1,56 @@
 # Omakase Ruby styling for Rails
 inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 
-# Overwrite or add rules to create your own house style
-#
-# # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
-# Layout/SpaceInsideArrayLiteralBrackets:
-#   Enabled: false
+plugins:
+  - rubocop-graphql
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - "db/schema.rb"
+    - "bin/*"
+    - "vendor/**/*"
+    - "node_modules/**/*"
+
+# GraphQL specific rules - disable overly strict ones
+GraphQL/ArgumentDescription:
+  Enabled: false
+
+GraphQL/FieldDescription:
+  Enabled: false
+
+GraphQL/ObjectDescription:
+  Enabled: false
+
+GraphQL/MaxComplexitySchema:
+  Enabled: false
+
+GraphQL/MaxDepthSchema:
+  Enabled: false
+
+GraphQL/ExtractInputType:
+  Enabled: false
+
+GraphQL/ExtractType:
+  Enabled: false
+
+GraphQL/OrderedArguments:
+  Enabled: false
+
+GraphQL/OrderedFields:
+  Enabled: false
+
+# Allow longer blocks in GraphQL types
+Metrics/BlockLength:
+  Exclude:
+    - "app/graphql/**/*"
+    - "spec/**/*"
+    - "config/**/*"
+    - "db/**/*"
+
+# Allow longer methods in mutations
+Metrics/MethodLength:
+  Max: 20
+  Exclude:
+    - "app/graphql/mutations/**/*"
+    - "db/migrate/*"
