@@ -6,7 +6,7 @@ module Types
     field :due_date, GraphQL::Types::ISO8601Date, null: false
     field :workplan_id, ID, null: false
     field :workplan, Types::WorkplanType, null: false
-    field :comments, [Types::CommentType], null: false
+    field :comments, [ Types::CommentType ], null: false
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
 

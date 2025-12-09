@@ -5,7 +5,7 @@ module Types
     field :status, Types::StatusEnum, null: false
     field :category, Types::CategoryEnum, null: false
     field :tasks_count, Integer, null: false
-    field :tasks, [Types::TaskType], null: false do
+    field :tasks, [ Types::TaskType ], null: false do
       argument :limit, Integer, required: false
       argument :offset, Integer, required: false
       argument :status, Types::StatusEnum, required: false

@@ -7,7 +7,7 @@ module Mutations
 
       def resolve(id:)
         task = Task.find_by(id: id)
-        return { task: nil, errors: ['Task not found'] } unless task
+        return { task: nil, errors: [ "Task not found" ] } unless task
 
         if task.destroy
           { task: task, errors: [] }

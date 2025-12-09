@@ -5,6 +5,6 @@ module Mutations
     input_object_class Types::BaseInputObject
     object_class Types::BaseObject
 
-    field :errors, [String], null: false
+    field :errors, [ String ], null: false
   end
 end

@@ -10,7 +10,7 @@ module Mutations
 
       def resolve(id:, **attributes)
         task = Task.find_by(id: id)
-        return { task: nil, errors: ['Task not found'] } unless task
+        return { task: nil, errors: [ "Task not found" ] } unless task
 
         if task.update(attributes.compact)
           { task: task, errors: [] }

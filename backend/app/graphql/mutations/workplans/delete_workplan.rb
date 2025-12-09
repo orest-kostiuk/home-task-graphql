@@ -7,7 +7,7 @@ module Mutations
 
       def resolve(id:)
         workplan = Workplan.find_by(id: id)
-        return { workplan: nil, errors: ['Workplan not found'] } unless workplan
+        return { workplan: nil, errors: [ "Workplan not found" ] } unless workplan
 
         if workplan.destroy
           { workplan: workplan, errors: [] }

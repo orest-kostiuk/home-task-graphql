@@ -11,6 +11,6 @@ class CreateTasks < ActiveRecord::Migration[8.0]
 
     add_index :tasks, :status
     add_index :tasks, :due_date
-    add_index :tasks, [:workplan_id, :status]
+    add_index :tasks, [ :workplan_id, :status ]
   end
 end

@@ -10,7 +10,7 @@ module Mutations
 
       def resolve(id:, **attributes)
         workplan = Workplan.find_by(id: id)
-        return { workplan: nil, errors: ['Workplan not found'] } unless workplan
+        return { workplan: nil, errors: [ "Workplan not found" ] } unless workplan
 
         if workplan.update(attributes.compact)
           { workplan: workplan, errors: [] }

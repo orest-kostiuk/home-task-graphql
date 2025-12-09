@@ -7,7 +7,7 @@ module Mutations
 
       def resolve(id:)
         comment = Comment.find_by(id: id)
-        return { comment: nil, errors: ['Comment not found'] } unless comment
+        return { comment: nil, errors: [ "Comment not found" ] } unless comment
 
         if comment.destroy
           { comment: comment, errors: [] }

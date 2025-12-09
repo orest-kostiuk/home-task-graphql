@@ -1,6 +1,6 @@
 module Types
   class QueryType < Types::BaseObject
-    field :workplans, [Types::WorkplanType], null: false do
+    field :workplans, [ Types::WorkplanType ], null: false do
       argument :limit, Integer, required: false
       argument :offset, Integer, required: false
       argument :status, Types::StatusEnum, required: false
@@ -16,7 +16,7 @@ module Types
       argument :id, ID, required: true
     end
 
-    field :tasks, [Types::TaskType], null: false do
+    field :tasks, [ Types::TaskType ], null: false do
       argument :workplan_id, ID, required: false
       argument :limit, Integer, required: false
       argument :offset, Integer, required: false
@@ -26,7 +26,7 @@ module Types
       argument :id, ID, required: true
     end
 
-    field :comments, [Types::CommentType], null: false do
+    field :comments, [ Types::CommentType ], null: false do
       argument :task_id, ID, required: true
     end
 
