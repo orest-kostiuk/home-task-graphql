@@ -9,6 +9,8 @@ module Mutations
       field :task, Types::TaskType, null: true
 
       def resolve(name:, due_date:, workplan_id:, status: nil)
+        return { task: nil, errors: ["Workplan not found"] } unless Workplan.exists?(workplan_id)
+
         task = Task.new(name: name, due_date: due_date, workplan_id: workplan_id)
         task.status = status if status
 

@@ -7,6 +7,8 @@ module Mutations
       field :comment, Types::CommentType, null: true
 
       def resolve(body:, task_id:)
+        return { comment: nil, errors: ["Task not found"] } unless Task.exists?(task_id)
+
         comment = Comment.new(body: body, task_id: task_id)
 
         if comment.save

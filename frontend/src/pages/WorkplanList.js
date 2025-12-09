@@ -24,7 +24,7 @@ function WorkplanList() {
       category: categoryFilter || null
     }
   });
-  const [deleteWorkplan] = useMutation(DELETE_WORKPLAN, {
+  const [deleteWorkplan, { loading: deleting }] = useMutation(DELETE_WORKPLAN, {
     refetchQueries: () => [{
       query: GET_WORKPLANS,
       variables: {
@@ -36,9 +36,15 @@ function WorkplanList() {
     }]
   });
 
+  const [loadingMore, setLoadingMore] = useState(false);
+
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this workplan?')) {
-      await deleteWorkplan({ variables: { id } });
+      try {
+        await deleteWorkplan({ variables: { id } });
+      } catch (err) {
+        alert('Failed to delete workplan: ' + err.message);
+      }
     }
   };
 
@@ -48,26 +54,32 @@ function WorkplanList() {
   };
 
   const handleLoadMore = async () => {
+    if (loadingMore) return;
+    setLoadingMore(true);
     const nextOffset = offset + PAGE_SIZE;
-    const { data: moreData } = await fetchMore({
-      variables: {
-        limit: PAGE_SIZE,
-        offset: nextOffset,
-        status: statusFilter || null,
-        category: categoryFilter || null
-      },
-      updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult || !fetchMoreResult.workplansConnection) return prev;
-        return {
-          workplansConnection: {
-            ...fetchMoreResult.workplansConnection,
-            nodes: [...prev.workplansConnection.nodes, ...fetchMoreResult.workplansConnection.nodes]
-          }
-        };
-      }
-    });
-    setOffset(nextOffset);
-    setHasMore(!!moreData?.workplansConnection?.hasNextPage);
+    try {
+      const { data: moreData } = await fetchMore({
+        variables: {
+          limit: PAGE_SIZE,
+          offset: nextOffset,
+          status: statusFilter || null,
+          category: categoryFilter || null
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult || !fetchMoreResult.workplansConnection) return prev;
+          return {
+            workplansConnection: {
+              ...fetchMoreResult.workplansConnection,
+              nodes: [...prev.workplansConnection.nodes, ...fetchMoreResult.workplansConnection.nodes]
+            }
+          };
+        }
+      });
+      setOffset(nextOffset);
+      setHasMore(!!moreData?.workplansConnection?.hasNextPage);
+    } finally {
+      setLoadingMore(false);
+    }
   };
 
   useEffect(() => {
@@ -167,8 +179,8 @@ function WorkplanList() {
 
       {hasMore && (
         <div className="load-more">
-          <button className="btn btn-primary" onClick={handleLoadMore}>
-            Load more
+          <button className="btn btn-primary" onClick={handleLoadMore} disabled={loadingMore}>
+            {loadingMore ? 'Loading...' : 'Load more'}
           </button>
         </div>
       )}

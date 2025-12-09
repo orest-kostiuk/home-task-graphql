@@ -9,6 +9,7 @@ function WorkplanForm({ workplan, onClose, refetchVariables }) {
   const [name, setName] = useState(workplan?.name || '');
   const [category, setCategory] = useState(workplan?.category || '');
   const [status, setStatus] = useState(workplan?.status || '');
+  const [error, setError] = useState(null);
 
   const [createWorkplan, { loading: creating }] = useMutation(CREATE_WORKPLAN, {
     refetchQueries: [{
@@ -26,34 +27,50 @@ function WorkplanForm({ workplan, onClose, refetchVariables }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
 
-    if (isEditing) {
-      await updateWorkplan({
-        variables: {
-          id: workplan.id,
-          name,
-          category,
-          status
+    try {
+      let result;
+      if (isEditing) {
+        result = await updateWorkplan({
+          variables: {
+            id: workplan.id,
+            name,
+            category,
+            status
+          }
+        });
+        if (result.data?.updateWorkplan?.errors?.length > 0) {
+          setError(result.data.updateWorkplan.errors.join(', '));
+          return;
         }
-      });
-    } else {
-      await createWorkplan({
-        variables: {
-          name,
-          category,
-          status: status || 'NOT_STARTED'
+      } else {
+        result = await createWorkplan({
+          variables: {
+            name,
+            category,
+            status: status || 'NOT_STARTED'
+          }
+        });
+        if (result.data?.createWorkplan?.errors?.length > 0) {
+          setError(result.data.createWorkplan.errors.join(', '));
+          return;
         }
-      });
+      }
+      onClose();
+    } catch (err) {
+      setError(err.message || 'An error occurred');
     }
-    onClose();
   };
 
   const loading = creating || updating;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <h2>{isEditing ? 'Edit workplan' : 'Create new workplan'}</h2>
+        <h2 id="modal-title">{isEditing ? 'Edit workplan' : 'Create new workplan'}</h2>
+
+        {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">

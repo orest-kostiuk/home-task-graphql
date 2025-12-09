@@ -16,6 +16,7 @@ function TaskList() {
   const [editingComments, setEditingComments] = useState({});
   const [taskStatusFilter, setTaskStatusFilter] = useState('');
   const [taskOffset, setTaskOffset] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const { loading, error, data, fetchMore, refetch } = useQuery(GET_WORKPLAN, {
     variables: {
@@ -56,7 +57,11 @@ function TaskList() {
 
   const handleDelete = async (taskId) => {
     if (window.confirm('Are you sure you want to delete this task?')) {
-      await deleteTask({ variables: { id: taskId } });
+      try {
+        await deleteTask({ variables: { id: taskId } });
+      } catch (err) {
+        alert('Failed to delete task: ' + err.message);
+      }
     }
   };
 
@@ -87,8 +92,12 @@ function TaskList() {
     const body = (commentDrafts[taskId] || '').trim();
     if (!body) return;
 
-    await createComment({ variables: { body, taskId } });
-    setCommentDrafts((prev) => ({ ...prev, [taskId]: '' }));
+    try {
+      await createComment({ variables: { body, taskId } });
+      setCommentDrafts((prev) => ({ ...prev, [taskId]: '' }));
+    } catch (err) {
+      alert('Failed to add comment: ' + err.message);
+    }
   };
 
   const formatDateTime = (isoString) => {
@@ -103,7 +112,11 @@ function TaskList() {
   };
 
   const handleDeleteComment = async (commentId) => {
-    await deleteComment({ variables: { id: commentId } });
+    try {
+      await deleteComment({ variables: { id: commentId } });
+    } catch (err) {
+      alert('Failed to delete comment: ' + err.message);
+    }
   };
 
   const handleStartEditComment = (comment) => {
@@ -117,12 +130,16 @@ function TaskList() {
   const handleSaveEditComment = async (commentId) => {
     const body = (editingComments[commentId] || '').trim();
     if (!body) return;
-    await updateComment({ variables: { id: commentId, body } });
-    setEditingComments((prev) => {
-      const next = { ...prev };
-      delete next[commentId];
-      return next;
-    });
+    try {
+      await updateComment({ variables: { id: commentId, body } });
+      setEditingComments((prev) => {
+        const next = { ...prev };
+        delete next[commentId];
+        return next;
+      });
+    } catch (err) {
+      alert('Failed to update comment: ' + err.message);
+    }
   };
 
   const handleCancelEditComment = (commentId) => {
@@ -134,32 +151,38 @@ function TaskList() {
   };
 
   const handleLoadMoreTasks = async () => {
+    if (loadingMore) return;
+    setLoadingMore(true);
     const nextOffset = taskOffset + PAGE_SIZE;
-    const { data: moreData } = await fetchMore({
-      variables: {
-        id,
-        taskLimit: PAGE_SIZE,
-        taskOffset: nextOffset,
-        taskStatus: taskStatusFilter || null
-      },
-      updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult || !fetchMoreResult.workplan) return prev;
-        return {
-          workplan: {
-            ...prev.workplan,
-            ...fetchMoreResult.workplan,
-            tasksConnection: {
-              ...fetchMoreResult.workplan.tasksConnection,
-              nodes: [
-                ...(prev.workplan?.tasksConnection?.nodes || []),
-                ...(fetchMoreResult.workplan.tasksConnection?.nodes || [])
-              ]
+    try {
+      await fetchMore({
+        variables: {
+          id,
+          taskLimit: PAGE_SIZE,
+          taskOffset: nextOffset,
+          taskStatus: taskStatusFilter || null
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult || !fetchMoreResult.workplan) return prev;
+          return {
+            workplan: {
+              ...prev.workplan,
+              ...fetchMoreResult.workplan,
+              tasksConnection: {
+                ...fetchMoreResult.workplan.tasksConnection,
+                nodes: [
+                  ...(prev.workplan?.tasksConnection?.nodes || []),
+                  ...(fetchMoreResult.workplan.tasksConnection?.nodes || [])
+                ]
+              }
             }
-          }
-        };
-      }
-    });
-    setTaskOffset(nextOffset);
+          };
+        }
+      });
+      setTaskOffset(nextOffset);
+    } finally {
+      setLoadingMore(false);
+    }
   };
 
   useEffect(() => {
@@ -172,8 +195,6 @@ function TaskList() {
     });
   }, [taskStatusFilter, refetch, id]);
 
-  useEffect(() => {
-  }, [data, taskOffset, PAGE_SIZE]);
 
   const isCommentMutating = creatingComment || deletingComment || updatingComment;
 
@@ -330,8 +351,8 @@ function TaskList() {
 
       {tasksConnection.hasNextPage && (
         <div className="load-more">
-          <button className="btn btn-primary" onClick={handleLoadMoreTasks}>
-            Load more tasks
+          <button className="btn btn-primary" onClick={handleLoadMoreTasks} disabled={loadingMore}>
+            {loadingMore ? 'Loading...' : 'Load more tasks'}
           </button>
         </div>
       )}

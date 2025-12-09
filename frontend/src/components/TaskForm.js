@@ -4,57 +4,68 @@ import { CREATE_TASK, UPDATE_TASK } from '../graphql/mutations';
 import { GET_WORKPLAN } from '../graphql/queries';
 import './Modal.css';
 
-function TaskForm({ task, workplanId, onClose, refetchVariables }) {
+function TaskForm({ task, workplanId, onClose }) {
   const isEditing = !!task;
   const [name, setName] = useState(task?.name || '');
   const [status, setStatus] = useState(task?.status || '');
   const [dueDate, setDueDate] = useState(task?.dueDate || '');
+  const [error, setError] = useState(null);
 
   const [createTask, { loading: creating }] = useMutation(CREATE_TASK, {
-    refetchQueries: [{
-      query: GET_WORKPLAN,
-      variables: refetchVariables || { id: workplanId }
-    }]
+    refetchQueries: [{ query: GET_WORKPLAN, variables: { id: workplanId } }]
   });
 
   const [updateTask, { loading: updating }] = useMutation(UPDATE_TASK, {
-    refetchQueries: [{
-      query: GET_WORKPLAN,
-      variables: refetchVariables || { id: workplanId }
-    }]
+    refetchQueries: [{ query: GET_WORKPLAN, variables: { id: workplanId } }]
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
 
-    if (isEditing) {
-      await updateTask({
-        variables: {
-          id: task.id,
-          name,
-          status,
-          dueDate
+    try {
+      let result;
+      if (isEditing) {
+        result = await updateTask({
+          variables: {
+            id: task.id,
+            name,
+            status,
+            dueDate
+          }
+        });
+        if (result.data?.updateTask?.errors?.length > 0) {
+          setError(result.data.updateTask.errors.join(', '));
+          return;
         }
-      });
-    } else {
-      await createTask({
-        variables: {
-          name,
-          status: status || 'NOT_STARTED',
-          dueDate,
-          workplanId
+      } else {
+        result = await createTask({
+          variables: {
+            name,
+            status: status || 'NOT_STARTED',
+            dueDate,
+            workplanId
+          }
+        });
+        if (result.data?.createTask?.errors?.length > 0) {
+          setError(result.data.createTask.errors.join(', '));
+          return;
         }
-      });
+      }
+      onClose();
+    } catch (err) {
+      setError(err.message || 'An error occurred');
     }
-    onClose();
   };
 
   const loading = creating || updating;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <h2>{isEditing ? 'Edit task' : 'Create new task'}</h2>
+        <h2 id="modal-title">{isEditing ? 'Edit task' : 'Create new task'}</h2>
+
+        {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
