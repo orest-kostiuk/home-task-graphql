@@ -1,0 +1,26 @@
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  background: var(--pill-bg);
+  color: #3f4c6b;
+  border: 1px solid #e0e4ed;
+}
+
+.status-not-started {
+  background: #e5e7eb;
+  color: #3f4c6b;
+}
+
+.status-in-progress {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-complete {
+  background: #d1fae5;
+  color: #047857;
+}
